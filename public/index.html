@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Send a message</title>
+  <style>
+    body {
+      background: white;
+      font-family: Arial, sans-serif;
+      margin: 40px;
+    }
+
+    input {
+      width: 250px;
+      padding: 8px;
+      font-size: 16px;
+    }
+
+    button {
+      padding: 8px 16px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+
+<body>
+  <input id="message" type="text" placeholder="Type a message">
+  <button onclick="send()">Send</button>
+  <p id="status"></p>
+  <pre>
+    </pre>
+
+  <script>
+    function send() {
+      const box = document.getElementById('message');
+      fetch('/send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: box.value })
+      })
+        .then(() => {
+          document.getElementById('status').textContent = 'Sent!';
+          box.value = '';
+        });
+    }
+
+
+
+
+
+    setInterval(() => {
+      fetch('/status')
+        .then(r => r.json())
+        .then(data => {
+          if (data.closed) {
+            window.close(); // works only in some cases
+            document.body.innerHTML = '<p>Session ended. You can close this tab.</p>';
+          }
+        })
+        .catch(() => {
+          document.body.innerHTML = '<p>Server stopped. You can close this tab.</p>';
+        });
+    }, 1000);
+
+
+
+
+
+  </script>
+</body>
+
+</html>
